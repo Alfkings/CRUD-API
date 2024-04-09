@@ -1,4 +1,4 @@
-require("dotenv").config();
+const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const productRoute = require("./routes/productRoute");
@@ -7,6 +7,8 @@ var cors = require("cors");
 const FRONTEND = process.env.FRONTEND;
 
 const app = express();
+
+dotenv.config({ path: "./.env" });
 
 const MONGO_URL = process.env.MONGO_URL;
 const PORT = process.env.PORT || 3000;
@@ -27,8 +29,13 @@ app.get("/", (req, res) => {
 app.use(errMiddleware);
 
 mongoose
-  .connect(MONGO_URL)
-  .then(() => {
+  .connect(MONGO_URL, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: true,
+  })
+  .then((con) => {
+    console.log(con.connection);
     console.log("connected to MongoDB");
     app.listen(PORT, () => {
       console.log(`server is running on port ${PORT}`);
